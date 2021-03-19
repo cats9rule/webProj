@@ -1,5 +1,4 @@
 import { Pice } from "./pice.js";
-import { Kafa } from "./kafa.js";
 
 export class Narudzbina{
 
