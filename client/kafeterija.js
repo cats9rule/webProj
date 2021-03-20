@@ -5,7 +5,7 @@ export class Kafeterija{
     
     constructor(brStolova){
         this.brStolova = parseInt(brStolova);
-        this.meni = new Meni();
+        this.meni = new Meni(this);
         this.kontejner = null;
 
         this.stolovi = [];
@@ -15,8 +15,14 @@ export class Kafeterija{
     }
 
     crtajKafeteriju(host){
+        let naslov = document.createElement("h1");
+        naslov.classList.add("naslov");
+        naslov.innerHTML = "Kafeterija";
+        host.appendChild(naslov);
         this.kontejner = document.createElement("div");
         this.kontejner.classList.add("kafeterija");
+        var temp = "wtf";
+        this.kontejner.classList.add(temp);
         host.appendChild(this.kontejner);
 
         this.meni.prikaziMeni(this.kontejner);
@@ -24,8 +30,24 @@ export class Kafeterija{
         sala.classList.add("salaStolovi");
         this.kontejner.appendChild(sala);
 
-        this.stolovi.forEach((sto, index) => {
+        this.stolovi.forEach((sto) => {
             sto.crtajSto(sala);
+        });
+    }
+
+    dodajStavkuSto(stavka){
+        this.stolovi.forEach((sto) => {
+            sto.addStavkaMeniSto(stavka);
+        });
+    }
+    ukloniStavkuSto(index){
+        this.stolovi.forEach((sto) => {
+            sto.removeStavkaMeniSto(index);
+        });
+    }
+    azurirajStavkuSto(index, stavka){
+        this.stolovi.forEach((sto) => {
+            sto.updateStavkaMeniSto(index, stavka);
         });
     }
 }

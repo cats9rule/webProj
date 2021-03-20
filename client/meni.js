@@ -2,9 +2,11 @@ import { Pice } from "./pice.js";
 
 export class Meni{
 
-    constructor(){
+    constructor(k){
 
         this.kontejner = null;
+
+        this.kafeterijaRef = k;
 
 
         this.stavke = [];
@@ -69,25 +71,33 @@ export class Meni{
     }
 
     dodajStavku(){
-        console.log("stavka");
+        //console.log("stavka");
 
-        let naz = document.getElementById("nazivPica");
-        let cena = document.getElementById("cenaPica");
-        let s = new Pice(naz.value,cena.value);
+        let naz = document.querySelector(".nazivPica");
+        let cena = document.querySelector(".cenaPica");
+        let s = new Pice(naz.value,parseInt(cena.value));
         this.stavke.push(s);
-        alert(this.stavke[this.stavke.length-1]);
+        
 
         //this.crtajFormu(this.kontejner);
-        let lista = document.getElementById("stavkeSelect");
+        let l = document.querySelector(".stavkeSelect");
+        console.log(l);
+
         let stavka = document.createElement("option");
+        stavka.classList.add("stavkaMeni");
         stavka.value = s.Cena;
         stavka.name = s.Naziv;
         stavka.innerHTML = s.Naziv;
-        lista.appendChild(stavka);
+        
+        l.add(stavka);
+        alert(stavka.name);
+        console.log(l);
+
+        this.kafeterijaRef.dodajStavkuSto(stavka);
     }
 
     obrisiStavku(){
-        let lista = document.getElementById("stavkeSelect");
+        let lista = document.querySelector(".stavkeSelect");
         let index = lista.options.selectedIndex;
         console.log(index);
         let p = lista.options[index];
@@ -95,18 +105,21 @@ export class Meni{
         this.stavke = this.stavke.filter(s=>s.Naziv!==p.name
             && s.Cena!==p.value);
         console.log(this.stavke);
+
+        this.kafeterijaRef.ukloniStavkuSto(index);
     }
 
     izmeniStavku(){
-        let naz = document.getElementById("nazivPica");
-        let cena = document.getElementById("cenaPica");
+        let naz = document.querySelector(".nazivPica");
+        let cena = document.querySelector(".cenaPica");
 
-        let lista = document.getElementById("stavkeSelect");
+        let lista = document.querySelector(".stavkeSelect");
         let index = lista.options.selectedIndex;
         console.log(index);
         let p = lista.options[index];
         this.stavke[index].Naziv = p.name = naz.value;
         this.stavke[index].Cena = p.value = cena.value;
+        p.innerHTML = naz.value;
     }
 
     prikaziMeni(host){
@@ -115,9 +128,11 @@ export class Meni{
         }
 
         this.kontejner = document.createElement("div");
-        //this.kontejner.classList.add("meni");
+        this.kontejner.classList.add("meni");
         host.appendChild(this.kontejner);
-
+        let meniTekst = document.createElement("h2");
+        meniTekst.innerHTML = "Meni";
+        this.kontejner.appendChild(meniTekst);
 
         this.crtajFormu(this.kontejner);
     }
@@ -127,40 +142,37 @@ export class Meni{
             throw new Exception("Host element za stavke menija ne postoji!");
         }
 
-        let kontejner = document.createElement("div");
-        //kontejner.classList.add("stavkeForma");
-        host.appendChild(kontejner);
+        // let kontejner = document.createElement("div");
+        // kontejner.classList.add("stavkeForma");
+        // host.appendChild(kontejner);
 
-        let meniTekst = document.createElement("h2");
-        meniTekst.innerHTML = "Meni";
-        this.kontejner.appendChild(meniTekst);
+        const forma = document.createElement("form");
+        forma.classList.add("forma");
+        host.appendChild(forma);
 
-        let forma = document.createElement("form");
-        //forma.classList.add("forma");
-        this.kontejner.appendChild(forma);
-
-        let sel = document.createElement("select");
-        sel.id = "stavkeSelect";
+        const sel = document.createElement("select");
+        let id = "stavkeSelect";
+        sel.classList.add(id);
         sel.setAttribute('multiple', true);
         sel.size = 10;
-        //sel.classList.add(selekcijaMeni);
         forma.appendChild(sel);
 
         let stavka;
         this.stavke.forEach( (s, index) => {
             stavka = document.createElement("option");
+            stavka.classList.add("stavkaMeni");
             stavka.value = s.Cena;
             stavka.name = s.Naziv;
             stavka.innerHTML = s.Naziv;
-            sel.appendChild(stavka);
+            sel.add(stavka);
         });
         // pri odabiru stavke, odgovarajuca polja dobijaju adekvatne vrednosti
         sel.onchange=(event) => {
             let i = sel.selectedIndex;
             if(i >= 0) {
-                let naz = document.getElementById("nazivPica");
+                let naz = document.querySelector(".nazivPica");
                 naz.value = sel.options[i].name;
-                naz = document.getElementById("cenaPica");
+                naz = document.querySelector(".cenaPica");
                 naz.value = sel.options[i].value;
             }
         }
@@ -168,60 +180,65 @@ export class Meni{
 
 
         /* Naziv i cena stavke */
-        let p = document.createElement("p");
-        //p.classList.add("atributiStavke");
+        let p = document.createElement("label");
+        //p.classList.add("polje");
+        p.name = "naziv"
         p.innerHTML = "Naziv: ";
         forma.appendChild(p);
 
         let inp = document.createElement("input");
-        //inp.classList.add("polje");
+        inp.classList.add("polje");
         inp.type = "text";
-        inp.id = "nazivPica";
+        inp.name = "naziv";
+        id = "nazivPica";
+        inp.classList.add(id);
+        
         p.appendChild(inp);
 
-        p = document.createElement("p");
-        //p.classList.add("atributiStavke");
+        p = document.createElement("label");
+        //p.classList.add("polje");
+        p.name = "cena";
         p.innerHTML = "Cena: ";
         forma.appendChild(p);
 
         inp = document.createElement("input");
-        //inp.classList.add("polje");
-        inp.type = "text";
-        inp.id = "cenaPica";
+        inp.classList.add("polje");
+        inp.type = "number";
+        inp.name = "cena";
+        id = "cenaPica";
+        inp.classList.add(id);
         p.appendChild(inp);
 
         
 
         /* Dugmad za dodavanje, izmenu i brisanje stavki iz menija */
 
-        let dugmad = forma;
-        //stavka.classList.appendChild("dugmadMeni");
 
         const btnDodaj = document.createElement("input");
-        //btnDodaj.classList.add("dugme");
+        btnDodaj.classList.add("dugme");
         btnDodaj.type = "button";
         btnDodaj.value = "Dodaj stavku";    
 
         btnDodaj.onclick=(event) => {
             this.dodajStavku();
         }
-        dugmad.appendChild(btnDodaj);
+        forma.appendChild(btnDodaj);
 
         const btnIzmeni = document.createElement("input");
-        //btnIzmeni.classList.add("dugme");
+        btnIzmeni.classList.add("dugme");
         btnIzmeni.type = "button";
         btnIzmeni.value = "Izmeni stavku";
-        dugmad.appendChild(btnIzmeni);
+        forma.appendChild(btnIzmeni);
 
         btnIzmeni.onclick=(event) => {
             this.izmeniStavku();
         }
 
         const btnObrisi = document.createElement("input");
-        //btnObrisi.classList.add("dugme");
+        btnObrisi.classList.add("dugme");
         btnObrisi.type = "button";
         btnObrisi.value = "Obrisi stavku";
-        dugmad.appendChild(btnObrisi);
+        forma.appendChild(btnObrisi);
 
         btnObrisi.onclick=(event) => {
             this.obrisiStavku();
