@@ -110,12 +110,36 @@ export class Sto{
 
     }
 
-    addStavkaMeniSto(stavka){
+    addStavkaMeniSto(naziv, cena, b){
         let s = document.querySelector(".naruciSelect" + this.broj);
-        let stav = document.createElement("option");
-        stav.name = s.name;
-        stav.value = s.value;
-        stav.innerHTML = s.innerHTML;
+        // let stav = document.createElement("option");
+        // stav.name = s.name;
+        // stav.value = s.value;
+        // stav.innerHTML = s.innerHTML;
+        // s.appendChild(stavka);
+
+        // for(let i=0; i< b.length ;i++){
+        //     s.options[i] = null;
+        // }
+
+        // console.log(b);
+
+        // let stavka;
+        // b.forEach( (st, index) => {
+        //     stavka = document.createElement("option");
+        //     stavka.classList.add("stavkaMeni");
+        //     stavka.value = st.Cena;
+        //     stavka.name = st.Naziv;
+        //     stavka.innerHTML = s.Naziv;
+        //     s.appendChild(stavka);
+        // });
+        let stavka = document.createElement("option");
+        //stavka.classList.add("stavkaMeni");
+        let naz = document.querySelector(".nazivPica");
+        let c = document.querySelector(".cenaPica");
+        stavka.value = c.value;
+        stavka.name = naz.value;
+        stavka.innerHTML = naziv;
         s.appendChild(stavka);
     }
     removeStavkaMeniSto(index){

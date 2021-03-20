@@ -81,17 +81,32 @@ export class Meni{
         let l = document.querySelector(".stavkeSelect");
         console.log(l);
 
-        let stavka = document.createElement("option");
-        stavka.classList.add("stavkaMeni");
-        stavka.value = s.Cena;
-        stavka.name = s.Naziv;
-        stavka.innerHTML = s.Naziv;
+        let b = this.stavke.length;
+        for(let i=0; i<b ;i++){
+            l.options[i] = null;
+        }
+
+        let stavka;
+        this.stavke.forEach( (s, index) => {
+            stavka = document.createElement("option");
+            stavka.classList.add("stavkaMeni");
+            stavka.value = s.Cena;
+            stavka.name = s.Naziv;
+            stavka.innerHTML = s.Naziv;
+            l.add(stavka);
+        });
+        // stavka = document.createElement("option");
+        // stavka.classList.add("stavkaMeni");
+        // stavka.value = cena.value;
+        // stavka.name = naz.value;
+        // stavka.innerHTML = naz.value;
+        // l.add(stavka);
         
-        l.add(stavka);
+        //l.add(stavka);
         alert(stavka.name);
         console.log(l);
 
-        this.kafeterijaRef.dodajStavkuSto(stavka);
+        this.kafeterijaRef.dodajStavkuSto(stavka.name, parseInt(stavka.cena), this.stavke);
     }
 
     obrisiStavku(){

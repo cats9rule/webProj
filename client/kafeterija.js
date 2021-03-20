@@ -35,9 +35,9 @@ export class Kafeterija{
         });
     }
 
-    dodajStavkuSto(stavka){
+    dodajStavkuSto(naziv, cena, b){
         this.stolovi.forEach((sto) => {
-            sto.addStavkaMeniSto(stavka);
+            sto.addStavkaMeniSto(naziv, parseInt(cena), b);
         });
     }
     ukloniStavkuSto(index){
