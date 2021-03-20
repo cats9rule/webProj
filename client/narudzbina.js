@@ -18,8 +18,8 @@ export class Narudzbina{
 
     izracunajSumu(){
         let suma = 0;
-        this.pica.foreach(  (pice) => {
-            suma+= pice.cena;
+        this.pica.forEach(  (pice) => {
+            suma+= parseInt(pice.cena);
         })
         console.log("Racun je: " + suma);
         return suma;

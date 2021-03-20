@@ -1,0 +1,24 @@
+.kafeterija{
+    display: flex;
+}
+
+.salaStolovi{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.sto{
+    display: flex;
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px;
+    flex-wrap:wrap;
+    flex-direction: column;
+    /* width: 100px;
+    height: 100px; */
+    flex-basis: 100px;
+    flex-grow: initial;
+    background-color: rgb(140, 194, 255);
+    font-size: large;
+}

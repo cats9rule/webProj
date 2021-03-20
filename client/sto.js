@@ -3,12 +3,10 @@ import { Pice } from "./pice.js";
 
 export class Sto{
 
-    constructor(broj, x, y, meniRef){
+    constructor(broj, meniRef){
         this.broj = broj;
         this.narudzbina = new Narudzbina();
         this.kontejner = null;
-        this.x = x;
-        this.y = y;
         this.meniRef = meniRef; 
     }
 
@@ -17,18 +15,19 @@ export class Sto{
         this.narudzbina.dodajPice(p);
         // treba update prikaz
         let t = document.getElementById("Racun"+this.broj);
-        t.innerHTML += p.Naziv + "<br>";
+        t.innerHTML += p.Naziv + "<br>"; 
     }
 
     plati(){
         let t = document.getElementById("Racun"+this.broj);
-        t.innerHTML += "";
+        console.log(t.innerHTML);
+        t.innerHTML = "";
         return this.narudzbina.platiRacun();
     }
 
     crtajSto(host){
         this.kontejner = document.createElement("div");
-        //this.kontejner.classList.add("sto");
+        this.kontejner.classList.add("sto");
         host.appendChild(this.kontejner);
 
         const broj = document.createElement("label");
@@ -49,8 +48,6 @@ export class Sto{
 
         const sel = document.createElement("select");
         sel.id = "naruciSelect";
-        sel.setAttribute('multiple', false);
-        sel.size = 10;
         //sel.classList.add(selekcijaMeni);
         forma.appendChild(sel);
 
@@ -86,16 +83,28 @@ export class Sto{
         btnD.onclick = (event) =>{
             let s = document.getElementById("naruciSelect");
             this.dodajPice(s.options[s.selectedIndex]);
+            let b = document.getElementById("btnPlatiN");
+            b.removeAttribute('disabled');
         }
         btnDiv.appendChild(btnD);
 
         let btnP = document.createElement("button");
         btnP.innerHTML = "Plati";
+        btnP.id = "btnPlatiN";
+        btnP.setAttribute('disabled', true);
         //btnP.classList.add("dugme");
+        btnP.setAttribute
         btnP.onclick = (event) => {
             this.plati();
+            btnP.setAttribute('disabled', true);
         }
+        btnDiv.appendChild(btnP);
 
     }
 
+    updateMeniSto(stavka){
+        let s = document.getElementById("naruciSelect");
+        s.appendChild(stavka);
+    }
+    removeMeniSto(){}
 }
