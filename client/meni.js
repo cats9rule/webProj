@@ -68,17 +68,45 @@ export class Meni{
         this.stavke.push(pice);
     }
 
-    dodajStavku(pice){
-            stavke.push(pice);
+    dodajStavku(){
+        console.log("stavka");
+
+        let naz = document.getElementById("nazivPica");
+        let cena = document.getElementById("cenaPica");
+        let s = new Pice(naz.value,cena.value);
+        this.stavke.push(s);
+        alert(this.stavke[this.stavke.length-1]);
+
+        //this.crtajFormu(this.kontejner);
+        let lista = document.getElementById("stavkeSelect");
+        let stavka = document.createElement("option");
+        stavka.value = s.Cena;
+        stavka.name = s.Naziv;
+        stavka.innerHTML = s.Naziv;
+        lista.appendChild(stavka);
     }
 
-    obrisiStavku(pice){
-        this.stavke.foreach( (stavka, index) => {
-            if(stavka.naziv == pice.naziv){
-                this.stavka.splice(index, 1);
-                return;
-            }
-        });
+    obrisiStavku(){
+        let lista = document.getElementById("stavkeSelect");
+        let index = lista.options.selectedIndex;
+        console.log(index);
+        let p = lista.options[index];
+        lista.removeChild(lista.options[index]);
+        this.stavke = this.stavke.filter(s=>s.Naziv!==p.name
+            && s.Cena!==p.value);
+        console.log(this.stavke);
+    }
+
+    izmeniStavku(){
+        let naz = document.getElementById("nazivPica");
+        let cena = document.getElementById("cenaPica");
+
+        let lista = document.getElementById("stavkeSelect");
+        let index = lista.options.selectedIndex;
+        console.log(index);
+        let p = lista.options[index];
+        this.stavke[index].Naziv = p.name = naz.value;
+        this.stavke[index].Cena = p.value = cena.value;
     }
 
     prikaziMeni(host){
@@ -105,26 +133,14 @@ export class Meni{
 
         let meniTekst = document.createElement("h2");
         meniTekst.innerHTML = "Meni";
-        kontejner.appendChild(meniTekst);
-
-//         <form>
-//     <p>What would you like for lunch?</p>
-//     <select name="fruit" multiple>
-//     <option value ="none">Nothing</option>
-//     <option value ="guava">Guava</option>
-//     <option value ="lychee">Lychee</option>
-//     <option value ="papaya">Papaya</option>
-//     <option value ="watermelon">Watermelon</option>
-//     </select> 
-//     <p><input type="submit" value="Submit"></p>
-// </form>
+        this.kontejner.appendChild(meniTekst);
 
         let forma = document.createElement("form");
         //forma.classList.add("forma");
-        kontejner.appendChild(forma);
+        this.kontejner.appendChild(forma);
 
         let sel = document.createElement("select");
-        sel.name = "Pica";
+        sel.id = "stavkeSelect";
         sel.setAttribute('multiple', true);
         sel.size = 10;
         //sel.classList.add(selekcijaMeni);
@@ -139,7 +155,7 @@ export class Meni{
             sel.appendChild(stavka);
         });
         // pri odabiru stavke, odgovarajuca polja dobijaju adekvatne vrednosti
-        sel.onclick=(event) => {
+        sel.onchange=(event) => {
             let i = sel.selectedIndex;
             if(i >= 0) {
                 let naz = document.getElementById("nazivPica");
@@ -148,6 +164,8 @@ export class Meni{
                 naz.value = sel.options[i].value;
             }
         }
+
+
 
         /* Naziv i cena stavke */
         let p = document.createElement("p");
@@ -173,47 +191,40 @@ export class Meni{
         p.appendChild(inp);
 
         
+
         /* Dugmad za dodavanje, izmenu i brisanje stavki iz menija */
+
         let dugmad = forma;
         //stavka.classList.appendChild("dugmadMeni");
 
-        const btnDodaj = document.createElement("button");
+        const btnDodaj = document.createElement("input");
         //btnDodaj.classList.add("dugme");
-        btnDodaj.innerHTML = "Dodaj stavku";
-        dugmad.appendChild(btnDodaj);
+        btnDodaj.type = "button";
+        btnDodaj.value = "Dodaj stavku";    
 
         btnDodaj.onclick=(event) => {
-            // let naz = document.getElementByName("nazivPica");
-            // let cena = document.getElementByName("cenaPica");
-            // let s = new Pice(naz,cena);
-            // this.dodajStavku(s);
-            // alert(this.stavke[this.stavke.length-1]);
-            // this.prikaziMeni();
-
-            console.log(this);
+            this.dodajStavku();
         }
+        dugmad.appendChild(btnDodaj);
 
-
-
-        const btnIzmeni = document.createElement("button");
+        const btnIzmeni = document.createElement("input");
         //btnIzmeni.classList.add("dugme");
-        btnIzmeni.innerHTML = "Izmeni stavku";
+        btnIzmeni.type = "button";
+        btnIzmeni.value = "Izmeni stavku";
         dugmad.appendChild(btnIzmeni);
 
         btnIzmeni.onclick=(event) => {
-            let st = document.getElementsByName("Pica");
-            if(st != undefined && st.selectedIndex>=0){
-                this.stavke
-            }
+            this.izmeniStavku();
         }
 
-        const btnObrisi = document.createElement("button");
+        const btnObrisi = document.createElement("input");
         //btnObrisi.classList.add("dugme");
-        btnObrisi.innerHTML = "Obrisi stavku";
+        btnObrisi.type = "button";
+        btnObrisi.value = "Obrisi stavku";
         dugmad.appendChild(btnObrisi);
 
         btnObrisi.onclick=(event) => {
-
+            this.obrisiStavku();
         }
 
     }
