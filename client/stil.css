@@ -109,7 +109,7 @@ label{
 
     width: min-content;
     height: min-content;
-    //max-height: fit-content;
+    /* max-height: fit-content; */
     
 
     margin: 5px;
