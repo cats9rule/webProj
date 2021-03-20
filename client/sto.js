@@ -89,6 +89,8 @@ export class Sto{
             this.dodajPice(s.options[s.selectedIndex]);
             let b = document.querySelector(".btnPlatiN" + this.broj);
             b.removeAttribute('disabled');
+            console.log(b.parentNode.parentNode);
+            b.parentNode.parentNode.style.backgroundColor = "rgb(252, 193, 137)";
         }
         btnDiv.appendChild(btnD);
 
@@ -101,6 +103,8 @@ export class Sto{
         btnP.onclick = (event) => {
             this.plati();
             btnP.setAttribute('disabled', true);
+
+            btnP.parentNode.parentNode.style.backgroundColor = "rgb(140, 194, 255)";
         }
         btnDiv.appendChild(btnP);
 

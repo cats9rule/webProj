@@ -78,8 +78,6 @@ export class Meni{
         let s = new Pice(naz.value,parseInt(cena.value));
         this.stavke.push(s);
         
-
-        //this.crtajFormu(this.kontejner);
         let l = document.querySelector(".stavkeSelect");
         console.log(l);
 
@@ -120,6 +118,8 @@ export class Meni{
         this.stavke[index].Naziv = p.name = naz.value;
         this.stavke[index].Cena = p.value = cena.value;
         p.innerHTML = naz.value;
+
+        this.kafeterijaRef.azurirajStavkuSto(index, p);
     }
 
     prikaziMeni(host){
@@ -151,8 +151,8 @@ export class Meni{
         host.appendChild(forma);
 
         const sel = document.createElement("select");
-        let id = "stavkeSelect";
-        sel.classList.add(id);
+        sel.classList.add("stavkaMeni");
+        sel.classList.add("stavkeSelect");
         sel.setAttribute('multiple', true);
         sel.size = 10;
         forma.appendChild(sel);
@@ -190,7 +190,7 @@ export class Meni{
         inp.classList.add("polje");
         inp.type = "text";
         inp.name = "naziv";
-        id = "nazivPica";
+        let id = "nazivPica";
         inp.classList.add(id);
         
         p.appendChild(inp);
