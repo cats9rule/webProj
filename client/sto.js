@@ -144,7 +144,7 @@ export class Sto{
     }
     removeStavkaMeniSto(index){
         let s = document.querySelector(".naruciSelect" + this.broj);
-        s.removeChild(s.options[index]);
+        s.options[index] = null
     }
     updateStavkaMeniSto(index, stavka){
         let s = document.querySelector(".naruciSelect" + this.broj);

@@ -76,31 +76,33 @@ export class Meni{
         let naz = document.querySelector(".nazivPica");
         let cena = document.querySelector(".cenaPica");
         let s = new Pice(naz.value,parseInt(cena.value));
+
+        console.log(s);
         this.stavke.push(s);
         
         let l = document.querySelector(".stavkeSelect");
         console.log(l);
 
-        let b = this.stavke.length;
-        for(let i=0; i<b ;i++){
-            l.options[i] = null;
-        }
+        // let b = this.stavke.length;
+        // for(let i=0; i<b ;i++){
+        //     l.options[i] = null;
+        // }
 
-        let stavka;
-        this.stavke.forEach( (s, index) => {
-            stavka = document.createElement("option");
-            stavka.classList.add("stavkaMeni");
-            stavka.value = s.Cena;
-            stavka.name = s.Naziv;
-            stavka.innerHTML = s.Naziv;
-            l.add(stavka);
-        });
-        // stavka = document.createElement("option");
-        // stavka.classList.add("stavkaMeni");
-        // stavka.value = cena.value;
-        // stavka.name = naz.value;
-        // stavka.innerHTML = naz.value;
-        // l.add(stavka);
+        // let stavka;
+        // this.stavke.forEach( (s, index) => {
+        //     stavka = document.createElement("option");
+        //     stavka.classList.add("stavkaMeni");
+        //     stavka.value = s.Cena;
+        //     stavka.name = s.Naziv;
+        //     stavka.innerHTML = s.Naziv;
+        //     l.add(stavka);
+        // });
+        let stavka = document.createElement("option");
+        stavka.classList.add("stavkaMeni");
+        stavka.value = cena.value;
+        stavka.name = naz.value;
+        stavka.innerHTML = naz.value;
+        l.add(stavka);
         
         //l.add(stavka);
         alert(stavka.name);
@@ -122,17 +124,23 @@ export class Meni{
         this.kafeterijaRef.ukloniStavkuSto(index);
     }
 
-    izmeniStavku(){
+    izmeniStavku(index){
         let naz = document.querySelector(".nazivPica");
         let cena = document.querySelector(".cenaPica");
 
         let lista = document.querySelector(".stavkeSelect");
-        let index = lista.options.selectedIndex;
+        //let index = lista.options.selectedIndex;
+
         console.log(index);
         let p = lista.options[index];
-        this.stavke[index].Naziv = p.name = naz.value;
-        this.stavke[index].Cena = p.value = cena.value;
-        p.innerHTML = naz.value;
+
+        console.log(p);
+
+        console.log(this.stavke[index]);
+
+        this.stavke[index].Naziv = lista.options[index].name = naz.value;
+        this.stavke[index].Cena = lista.options[index].value = cena.value;
+        lista.options[index].innerHTML = naz.value;
 
         this.kafeterijaRef.azurirajStavkuSto(index, p);
     }
@@ -246,7 +254,9 @@ export class Meni{
         forma.appendChild(btnIzmeni);
 
         btnIzmeni.onclick=(event) => {
-            this.izmeniStavku();
+            let lista = document.querySelector(".stavkeSelect");
+            let i = lista.options.selectedIndex;
+            this.izmeniStavku(i);
         }
 
         const btnObrisi = document.createElement("input");
