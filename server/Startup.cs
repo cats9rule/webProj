@@ -34,7 +34,8 @@ namespace server
                 {
                     builder.AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("http://127.0.0.1:5500");
+                    .WithOrigins("http://127.0.0.1:5500")
+                    .WithOrigins("https://cats9rule.github.io");
                 });
             });
             services.AddControllers();
