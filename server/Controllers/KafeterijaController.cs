@@ -49,13 +49,22 @@ namespace server.Controllers
 
         [Route("IzmeniPice/{id}")]
         [HttpPut]
-        public async Task IzmeniPice(int id, [FromBody] Pice pice)
+        public async Task<IActionResult> IzmeniPice(int id, [FromBody] Pice pice)
         {
             var p = await Context.Pica.FindAsync(id);
-            p.Naziv = pice.Naziv;
-            p.Cena = pice.Cena;
-            Context.Pica.Update(p);
-            await Context.SaveChangesAsync();
+            
+            if(pice.Cena > 0 && pice.Naziv.Length-1 > 0)
+            {
+                p.Naziv = pice.Naziv;
+                p.Cena = pice.Cena;
+                Context.Pica.Update(p);
+                await Context.SaveChangesAsync();
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(406);
+            }
         }
 
         [Route("PreuzmiPica")]
@@ -64,6 +73,7 @@ namespace server.Controllers
         {
             return await Context.Pica.ToListAsync();
         }
+
 
     }
 }
