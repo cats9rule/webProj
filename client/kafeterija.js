@@ -36,9 +36,9 @@ export class Kafeterija{
         });
     }
 
-    dodajStavkuSto(naziv, cena, b){
+    dodajStavkuSto(){
         this.stolovi.forEach((sto) => {
-            sto.addStavkaMeniSto(naziv, parseInt(cena), b);
+            sto.addStavkaMeniSto();
         });
     }
     ukloniStavkuSto(index){
@@ -49,23 +49,6 @@ export class Kafeterija{
     azurirajStavkuSto(index, stavka){
         this.stolovi.forEach((sto) => {
             sto.updateStavkaMeniSto(index, stavka);
-        });
-    }
-
-    upisBaza(){
-        
-        this.meni.upisiPica();
-
-        this.stolovi.forEach((sto, index) => {
-            fetch("https://localhost:5001/Kafeterija/UpisiSto/" + index, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-
-                })
-            });
         });
     }
 }

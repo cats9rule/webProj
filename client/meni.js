@@ -12,13 +12,12 @@ export class Meni{
 
         this.brojStavki = 4;
 
-
         this.stavke = [];
 
         fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
                 p.json().then(data => {
                     data.forEach(pice => {
-                        console.log(pice.naziv);
+                        //console.log(pice.naziv);
                         const kafa = new Pice(pice.naziv, pice.cena, pice.id); 
                         this.stavke.push(kafa);
                     });
@@ -62,44 +61,17 @@ export class Meni{
                     alert(stavka.name);
 
                     this.stavke.push(s);
-                    this.kafeterijaRef.dodajStavkuSto(stavka.name, parseInt(stavka.cena), this.brojStavki);
+                    this.kafeterijaRef.dodajStavkuSto();
                 }
                 else if (p.status == 406) {
-                    alert("Cena pica ne sme da bude negativna!");
+                    alert("Cena pica ne sme da bude negativna, i pice treba da ima naziv!");
                 }
                 else {
                     alert("Greška prilikom upisa.");
                 }
             }).catch(p => {
                 alert("Greška prilikom upisa.");
-            });
-
-        // let b = this.stavke.length;
-        // for(let i=0; i<b ;i++){
-        //     l.options[i] = null;
-        // }
-
-        // let stavka;
-        // this.stavke.forEach( (s, index) => {
-        //     stavka = document.createElement("option");
-        //     stavka.classList.add("stavkaMeni");
-        //     stavka.value = s.Cena;
-        //     stavka.name = s.Naziv;
-        //     stavka.innerHTML = s.Naziv;
-        //     l.add(stavka);
-        // });
-        // let stavka = document.createElement("option");
-        // stavka.classList.add("stavkaMeni");
-        // stavka.value = cena.value;
-        // stavka.name = naz.value;
-        // stavka.innerHTML = naz.value;
-        // l.add(stavka);
-        
-        // //l.add(stavka);
-        // alert(stavka.name);
-        // console.log(l);
-
-        // this.kafeterijaRef.dodajStavkuSto(stavka.name, parseInt(stavka.cena), this.brojStavki);
+        });
     }
 
     obrisiStavku(){
@@ -125,7 +97,7 @@ export class Meni{
                     lista.removeChild(lista.options[index]);
                     this.stavke = this.stavke.filter(s=>s.Naziv!==p.name
                         && s.Cena!==p.value);
-                    console.log(this.stavke);
+                    //console.log(this.stavke);
 
                     this.kafeterijaRef.ukloniStavkuSto(index);
                 }
@@ -141,16 +113,11 @@ export class Meni{
         let cena = document.querySelector(".cenaPica");
 
         let lista = document.querySelector(".stavkeSelect");
-        //let index = lista.options.selectedIndex;
-
-        console.log(index);
         let stavka = lista.options[index];
 
         console.log(stavka);
 
         let s = (this.stavke[index]);
-
-        
 
         fetch("https://localhost:5001/Kafeterija/IzmeniPice/" + s.id, {
                 method: "PUT",
@@ -172,7 +139,7 @@ export class Meni{
                 }
                 else
                 {
-                    alert("Doslo je do greske priliko azuriranja kolicine");
+                    alert("Doslo je do greske prilikom izmena.");
                 }
         });
     }
@@ -197,10 +164,6 @@ export class Meni{
             throw new Exception("Host element za stavke menija ne postoji!");
         }
 
-        // let kontejner = document.createElement("div");
-        // kontejner.classList.add("stavkeForma");
-        // host.appendChild(kontejner);
-
         const forma = document.createElement("form");
         forma.classList.add("forma");
         host.appendChild(forma);
@@ -217,11 +180,9 @@ export class Meni{
         fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
                 p.json().then(data => {
                     data.forEach(pice => {
-                        console.log(pice.naziv);
+                        //console.log(pice.naziv);
                         stavka = document.createElement("option");
                         stavka.classList.add("stavkaMeni");
-
-                        //console.log(s.Naziv);
 
                         stavka.value = pice.cena;
                         stavka.name = pice.naziv;
@@ -231,17 +192,6 @@ export class Meni{
                 }); 
             });
 
-        // this.stavke.forEach( (s, index) => {
-        //     stavka = document.createElement("option");
-        //     stavka.classList.add("stavkaMeni");
-
-        //     //console.log(s.Naziv);
-
-        //     stavka.value = s.Cena;
-        //     stavka.name = s.Naziv;
-        //     stavka.innerHTML = s.Naziv;
-        //     sel.add(stavka);
-        // });
         // pri odabiru stavke, odgovarajuca polja dobijaju adekvatne vrednosti
         sel.onchange=(event) => {
             let i = sel.selectedIndex;
@@ -256,8 +206,8 @@ export class Meni{
 
 
         /* Naziv i cena stavke */
+
         let p = document.createElement("label");
-        //p.classList.add("polje");
         p.name = "naziv"
         p.innerHTML = "Naziv: ";
         forma.appendChild(p);
@@ -272,7 +222,6 @@ export class Meni{
         p.appendChild(inp);
 
         p = document.createElement("label");
-        //p.classList.add("polje");
         p.name = "cena";
         p.innerHTML = "Cena: ";
         forma.appendChild(p);
@@ -284,8 +233,7 @@ export class Meni{
         id = "cenaPica";
         inp.classList.add(id);
         p.appendChild(inp);
-
-        
+     
 
         /* Dugmad za dodavanje, izmenu i brisanje stavki iz menija */
 

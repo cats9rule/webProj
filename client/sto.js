@@ -35,12 +35,10 @@ export class Sto{
         this.kontejner.appendChild(broj);
 
         const naruceno = document.createElement("p");
-        //naruceno.classList.add("tekst");
+
         let id = "Racun" + this.broj;
         naruceno.classList.add(id);
         this.kontejner.appendChild(naruceno);
-
-
 
         const forma = document.createElement("form");
         forma.classList.add("forma");
@@ -56,11 +54,9 @@ export class Sto{
         fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
                 p.json().then(data => {
                     data.forEach(pice => {
-                        console.log(pice.naziv);
+                        //console.log(pice.naziv);
                         stavka = document.createElement("option");
                         stavka.classList.add("stavkaMeni");
-
-                        //console.log(s.Naziv);
 
                         stavka.value = pice.cena;
                         stavka.name = pice.naziv;
@@ -70,7 +66,6 @@ export class Sto{
                 }); 
             });
 
-        // pri odabiru stavke, odgovarajuca polja dobijaju adekvatne vrednosti
         sel.onchange=(event) => {
             let identity = ".btnDodajN" + this.broj;
             btnD = document.querySelector(identity);
@@ -121,36 +116,15 @@ export class Sto{
 
     }
 
-    addStavkaMeniSto(naziv, cena, b){
+    addStavkaMeniSto(){
         let s = document.querySelector(".naruciSelect" + this.broj);
-        // let stav = document.createElement("option");
-        // stav.name = s.name;
-        // stav.value = s.value;
-        // stav.innerHTML = s.innerHTML;
-        // s.appendChild(stavka);
-
-        // for(let i=0; i< b.length ;i++){
-        //     s.options[i] = null;
-        // }
-
-        // console.log(b);
-
-        // let stavka;
-        // b.forEach( (st, index) => {
-        //     stavka = document.createElement("option");
-        //     stavka.classList.add("stavkaMeni");
-        //     stavka.value = st.Cena;
-        //     stavka.name = st.Naziv;
-        //     stavka.innerHTML = s.Naziv;
-        //     s.appendChild(stavka);
-        // });
         let stavka = document.createElement("option");
-        //stavka.classList.add("stavkaMeni");
+
         let naz = document.querySelector(".nazivPica");
         let c = document.querySelector(".cenaPica");
         stavka.value = c.value;
         stavka.name = naz.value;
-        stavka.innerHTML = naziv;
+        stavka.innerHTML = naz.value;
         s.appendChild(stavka);
     }
     removeStavkaMeniSto(index){

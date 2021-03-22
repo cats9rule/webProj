@@ -21,26 +21,11 @@ namespace server.Controllers
             Context = context;
         }
 
-        [Route("PreuzmiKafeteriju")]
-        [HttpGet]
-        public async Task<List<Kafeterija>> PreuzmiKafeteriju()
-        {
-            return await Context.Kafeterije.ToListAsync();
-        }
-
-        [Route("UpisiKafeteriju/{id}")]
-        [HttpPost]
-        public async Task UpisiKafeteriju(int id, [FromBody] Kafeterija kafeterija)
-        {
-            Context.Kafeterije.Add(kafeterija);
-            await Context.SaveChangesAsync();
-        }
-
         [Route("UpisiPice/{id}")]
         [HttpPost]
         public async Task<IActionResult> UpisiPice(int id, [FromBody] Pice pice)
         {
-            if(pice.Cena > 0)
+            if(pice.Cena > 0 && pice.Naziv.Length-1 > 0)
             {
                 Context.Pica.Add(pice);
                 await Context.SaveChangesAsync();
@@ -80,67 +65,5 @@ namespace server.Controllers
             return await Context.Pica.ToListAsync();
         }
 
-        [Route("UpisiMeni")]
-        [HttpPost]
-        public async Task UpisiMeni([FromBody] Meni meni)
-        {
-            Context.Meni.Add(meni);
-            await Context.SaveChangesAsync();
-        }
-
-        [Route("PreuzmiMeni")]
-        [HttpGet]
-        public async Task<List<Meni>> PreuzmiMeni()
-        {
-            return await Context.Meni.Include(p => p.Stavke).ToListAsync();
-        }
-
-        [Route("UpisiNarudzbinu")]
-        [HttpPost]
-        public async Task UpisiNarudzbinu(Narudzbina nar)
-        {
-            Context.Narudzbine.Add(nar);
-            await Context.SaveChangesAsync();
-        }
-
-        [Route("ObrisiNarudzbinu")]
-        [HttpGet]
-        public async Task ObrisiNarudzbinu(int id)
-        {
-            var nar = await Context.Narudzbine.FindAsync(id);
-            Context.Remove(nar);
-            await Context.SaveChangesAsync();
-        }
-
-        [Route("IzmeniNarudzbinu")]
-        [HttpGet]
-        public async Task IzmeniNarudzbinu(Narudzbina narudzbina)
-        {
-            var nar = await Context.Narudzbine.FindAsync(narudzbina.ID);
-            nar.Pica = narudzbina.Pica;
-            await Context.SaveChangesAsync();
-        }
-
-        [Route("PreuzmiNarudzbine")]
-        [HttpGet]
-        public async Task<List<Narudzbina>> PreuzmiNarudzbine()
-        {
-            return await Context.Narudzbine.ToListAsync();
-        }
-
-        [Route("UpisiSto/{broj}")]
-        [HttpPost]
-        public async Task UpisiSto(int id, Sto sto)
-        {
-            Context.Stolovi.Add(sto);
-            await Context.SaveChangesAsync();
-        }
-
-        [Route("PreuzmiStolove")]
-        [HttpGet]
-        public async Task<List<Sto>> PreuzmiStolove()
-        {
-            return await Context.Stolovi.ToListAsync();
-        }
     }
 }
