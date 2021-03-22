@@ -3,9 +3,8 @@ import { Pice } from "./pice.js";
 
 export class Narudzbina{
 
-    constructor(meniRef){
+    constructor(){
         this.pica = [];
-        this.meniRef = meniRef;
     }
 
     dodajPice(p){

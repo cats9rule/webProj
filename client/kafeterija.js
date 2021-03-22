@@ -4,6 +4,7 @@ import { Sto } from "./sto.js";
 export class Kafeterija{
     
     constructor(brStolova){
+        this.id = 0;
         this.brStolova = parseInt(brStolova);
         this.meni = new Meni(this);
         this.kontejner = null;
@@ -48,6 +49,23 @@ export class Kafeterija{
     azurirajStavkuSto(index, stavka){
         this.stolovi.forEach((sto) => {
             sto.updateStavkaMeniSto(index, stavka);
+        });
+    }
+
+    upisBaza(){
+        
+        this.meni.upisiPica();
+
+        this.stolovi.forEach((sto, index) => {
+            fetch("https://localhost:5001/Kafeterija/UpisiSto/" + index, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+
+                })
+            });
         });
     }
 }

@@ -11,11 +11,11 @@ export class Sto{
     }
 
     dodajPice(pice){
-        let p = new Pice(pice.name, pice.value);
+        let p = new Pice(pice.name, pice.value, pice.id);
         this.narudzbina.dodajPice(p);
         // treba update prikaz
         let t = document.querySelector(".Racun"+this.broj);
-        t.innerHTML += p.Naziv + "<br>"; 
+        t.innerHTML += p.naziv + "<br>"; 
     }
 
     plati(){
@@ -52,13 +52,24 @@ export class Sto{
         forma.appendChild(sel);
 
         let stavka;
-        this.meniRef.stavke.forEach( (s, index) => {
-            stavka = document.createElement("option");
-            stavka.value = s.Cena;
-            stavka.name = s.Naziv;
-            stavka.innerHTML = s.Naziv;
-            sel.appendChild(stavka);
-        });
+
+        fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
+                p.json().then(data => {
+                    data.forEach(pice => {
+                        console.log(pice.naziv);
+                        stavka = document.createElement("option");
+                        stavka.classList.add("stavkaMeni");
+
+                        //console.log(s.Naziv);
+
+                        stavka.value = pice.cena;
+                        stavka.name = pice.naziv;
+                        stavka.innerHTML = pice.naziv;
+                        sel.add(stavka);
+                    });
+                }); 
+            });
+
         // pri odabiru stavke, odgovarajuca polja dobijaju adekvatne vrednosti
         sel.onchange=(event) => {
             let identity = ".btnDodajN" + this.broj;

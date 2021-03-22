@@ -1,6 +1,7 @@
 export class Pice{
 
-    constructor(naziv, cena){
+    constructor(naziv, cena, id){
+        this.id = id;
         this.naziv = naziv;
         this.cena = cena;
     }
@@ -16,9 +17,6 @@ export class Pice{
         return this.cena;
     }
     set Cena(value){
-        if (value>0){
-            this.cena = value;
-        }
-        else alert("Ne moze se postaviti negativna cena!");
+        this.cena = value;
     }
 }
