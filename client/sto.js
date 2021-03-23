@@ -125,6 +125,7 @@ export class Sto{
         stavka.value = c.value;
         stavka.name = naz.value;
         stavka.innerHTML = naz.value;
+        stavka.classList.add("stavkaMeni");
         s.appendChild(stavka);
     }
     removeStavkaMeniSto(index){
