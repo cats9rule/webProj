@@ -4,6 +4,9 @@ import { Sto } from "./sto.js";
 export class Kafeterija{
     
     constructor(k){
+        /* Konstruktor prima objekat koji predstavlja kafeteriju, 
+        informacije su povucene iz baze, u main-u. */
+        
         this.id = k.id;
         this.brStolova = parseInt(k.brojStolova);
         this.meni = new Meni(this, k.meni);

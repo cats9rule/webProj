@@ -51,7 +51,7 @@ export class Sto{
 
         const racun = document.createElement("p");
 
-        let id = "Racun" + this.oznaka + "-" + this.broj;
+        let id = "Racun" + this.oznaka + "-" + this.broj; // za lociranje elementa na stranici
         racun.classList.add(id);
 
         this.kontejner.appendChild(racun);
@@ -61,7 +61,7 @@ export class Sto{
         this.kontejner.appendChild(forma);
 
         const sel = document.createElement("select");
-        id = "naruciSelect" + this.oznaka + "-" + this.broj;
+        id = "naruciSelect" + this.oznaka + "-" + this.broj; // za lociranje elementa na stranici
         sel.classList.add(id);
         forma.appendChild(sel);
 
@@ -78,7 +78,7 @@ export class Sto{
         });
 
         sel.onclick=(event) => {
-            let identity = ".btnNaruci" + this.oznaka + "-" + this.broj;
+            let identity = ".btnNaruci" + this.oznaka + "-" + this.broj; // za lociranje elementa na stranici
             btnD = document.querySelector(identity);
             if(sel.selectedIndex >= 0){
                 btnD.removeAttribute("disabled");
@@ -95,12 +95,12 @@ export class Sto{
         let btnD = document.createElement("button");
         btnD.classList.add("dugme");
         btnD.innerHTML = "Naruci";
-        id = "btnNaruci" + this.oznaka + "-" + this.broj;
+        id = "btnNaruci" + this.oznaka + "-" + this.broj; // za lociranje elementa na stranici
         btnD.classList.add(id);
         btnD.setAttribute('disabled', true);
 
         btnD.onclick = (event) =>{
-            let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
+            let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj); // za lociranje elementa na stranici
             let piceid = this.meniRef.stavke[s.selectedIndex].id;
             let picepostoji = 0;
 
@@ -129,7 +129,7 @@ export class Sto{
                 }
             });
             if(picepostoji == 0){
-                //console.log("sto: " + this.id + "\npice: " + piceid);
+                // ako pice ne postoji na datom stolu, treba ga dodati
                 fetch("https://localhost:5001/Kafeterija/DodajPiceNaSto/" + this.id + "/" + piceid, {
                     method: "POST",
                     headers: {
@@ -177,7 +177,11 @@ export class Sto{
                 })
             })
             .then(p => {
-                if(p.ok){
+                if(p.ok){ 
+
+                    /* Ako je brisanje pica sa stola u bazi proslo ok,
+                    azurira se prikaz na stranici. */
+                    
                     this.plati();
                     btnP.setAttribute('disabled', true);
                     btnP.parentNode.parentNode.style.backgroundColor = "rgb(140, 194, 255)";
@@ -190,6 +194,10 @@ export class Sto{
 
         fetch("https://localhost:5001/Kafeterija/PreuzmiPicaZaSto/" + this.id).then(p => {
                 p.json().then(data => {
+
+                    /* Za svako pice koje je prethodno naruceno za sto,
+                    dodaje se ispis na stolu onoliko puta koliko je to pice naruceno. */
+
                     data.forEach(naruceno => {
                         let temp;
 
@@ -229,6 +237,7 @@ export class Sto{
     removeStavkaMeniSto(index){
         let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
         s.options[index] = null
+        delete s.options[index];
     }
 
     updateStavkaMeniSto(index, stavka){

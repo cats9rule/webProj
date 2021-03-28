@@ -12,7 +12,6 @@ fetch("https://localhost:5001/Kafeterija/PreuzmiKafeterije")
 .then(p => {
                 p.json().then(data => {
                     data.forEach(k => {
-                        //console.log(k);
                         kafeterija = new Kafeterija(k);
                         kafeterija.crtajKafeteriju(document.body);
                     });

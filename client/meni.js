@@ -13,7 +13,6 @@ export class Meni{
         this.stavke = [];
 
         m.stavke.forEach(pice => {
-            //console.log(pice.id);
             const kafa = new Pice(pice.naziv, pice.cena, pice.id); 
             this.stavke.push(kafa);
         });
@@ -28,7 +27,6 @@ export class Meni{
         let cena = document.querySelector(klasa);
 
         let l = document.querySelector(".stavkeSelect"+this.id);
-        //console.log(l);
 
         let index = this.stavke.length + 1;
 
@@ -43,8 +41,12 @@ export class Meni{
                     "meniID": this.id
                 })
             }).then(p => {
-                console.log(p);
                 if (p.ok) {
+
+                    /* Ako je pice uspesno upisano u bazu, 
+                    potrebno je dodati novu stavku u meniju, 
+                    kao i azurirati meni na svakom stolu kafeterije. */
+
                     let stavka = document.createElement("option");
                     stavka.classList.add("stavkaMeni");
                     stavka.value = cena.value;
@@ -54,16 +56,21 @@ export class Meni{
 
                     fetch("https://localhost:5001/Kafeterija/PreuzmiPoslednjePice").then(q => {
                     q.json().then(data => {
-                    //console.log(data.id);
-                    let s = new Pice(data.naziv,data.cena, data.id);
-                    console.log(s);
 
-                    this.stavke.push(s);
-                    this.kafeterijaRef.dodajStavkuSto();
+                        /* baza generise ID novog pica, ali taj ID 
+                        je potreban za dodavanje pica na sto. Potrebno je 
+                        preuzeti ID iz baze.*/
+
+                        let s = new Pice(data.naziv,data.cena, data.id);
+                        console.log(s);
+
+                        this.stavke.push(s);
+                        this.kafeterijaRef.dodajStavkuSto();
                     });
                 });
                 }
-                else if (p.status == 500) {
+                else if (p.status == 406) {
+                    // server vraca kod 406 ako parametri pica nisu regularni
                     alert("Cena pica ne sme da bude negativna, i pice treba da ima naziv!");
                 }
                 else {
@@ -77,10 +84,7 @@ export class Meni{
     obrisiStavku(){
         let lista = document.querySelector(".stavkeSelect"+this.id);
         let index = lista.options.selectedIndex;
-        //console.log(index);
-        //let p = lista.options[index];
         let stavka = this.stavke[index];
-
 
         fetch("https://localhost:5001/Kafeterija/IzbrisiPice/" + stavka.id, {
                 method: "DELETE",
@@ -91,11 +95,12 @@ export class Meni{
                    
                 })
             }).then(p => {
-                if (p.ok)
-                {
+                if (p.ok){
+                    /* Ako je brisanje u bazi proslo ok, potrebno je
+                    azurirati meni kafeterije, kao i meni na svakom stolu. */
+
                     lista.removeChild(lista.options[index]);
                     this.stavke = this.stavke.filter(s=>s.id!==stavka.id);
-                    //console.log(this.stavke);
 
                     this.kafeterijaRef.ukloniStavkuSto(index);
                 }
@@ -113,8 +118,6 @@ export class Meni{
         let lista = document.querySelector(".stavkeSelect"+this.id);
         let stavka = lista.options[index];
 
-        //console.log(stavka);
-
         let s = (this.stavke[index]);
 
         fetch("https://localhost:5001/Kafeterija/IzmeniPice/" + s.id, {
@@ -127,16 +130,15 @@ export class Meni{
                     "cena": cena.value
                 })
             }).then(p => {
-                if (p.ok)
-                {
-                    this.stavke[index].Naziv = lista.options[index].name = naz.value;
-                    this.stavke[index].Cena = lista.options[index].value = cena.value;
+                if (p.ok){
+                    // ako je izmena u bazi prosla ok, potrebno je azurirati prikaz
+                    s.Naziv = lista.options[index].name = naz.value;
+                    s.Cena = lista.options[index].value = cena.value;
                     lista.options[index].innerHTML = naz.value;
 
                     this.kafeterijaRef.azurirajStavkuSto(index, stavka);
                 }
-                else
-                {
+                else{
                     alert("Doslo je do greske prilikom izmena.");
                 }
         });
@@ -148,8 +150,9 @@ export class Meni{
         }
 
         this.kontejner = document.createElement("div");
-        let klasa = "meni" + this.id;
+        let klasa = "meni" + this.id; // za lociranje elementa na stranici
         this.kontejner.classList.add(klasa);
+        this.kontejner.classList.add("meni");
         host.appendChild(this.kontejner);
         let meniTekst = document.createElement("h2");
         meniTekst.innerHTML = "Meni";
@@ -169,7 +172,7 @@ export class Meni{
 
         const sel = document.createElement("select");
         sel.classList.add("stavkaMeni");
-        sel.classList.add("stavkeSelect"+this.id);
+        sel.classList.add("stavkeSelect"+this.id); // za lociranje elementa na stranici
         sel.setAttribute('multiple', true);
         sel.size = 10;
         forma.appendChild(sel);
@@ -210,7 +213,7 @@ export class Meni{
         inp.classList.add("polje");
         inp.type = "text";
         inp.name = "naziv";
-        let id = "nazivPica" + this.id;
+        let id = "nazivPica" + this.id; // za lociranje elementa na stranici
         inp.classList.add(id);
         
         p.appendChild(inp);
@@ -224,7 +227,7 @@ export class Meni{
         inp.classList.add("polje");
         inp.type = "number";
         inp.name = "cena";
-        id = "cenaPica" + this.id;
+        id = "cenaPica" + this.id; // za lociranje elementa na stranici
         inp.classList.add(id);
         p.appendChild(inp);
      
