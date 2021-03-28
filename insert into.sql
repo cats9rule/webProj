@@ -40,9 +40,4 @@ INSERT INTO [dbo].[Sto] ( [ID], [MeniID], [KafeterijaID] )
 VALUES (12,2,2);
 INSERT INTO [dbo].[Sto] ( [ID], [MeniID], [KafeterijaID] )  
 VALUES (13,2,2);
-SET IDENTITY_INSERT [dbo].[Sto] OFF
-
-INSERT INTO Pice VALUES (1,"Espresso",120,1,NULL);
-INSERT INTO Pice VALUES (2,"Kisela voda",100,1,NULL);
-
-INSERT INTO Pice VALUES (3,"Latte",180,2,NULL);
+SET IDENTITY_INSERT [dbo].[Sto] OFF;
