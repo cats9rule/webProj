@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Models;
 
 namespace server.Migrations
 {
     [DbContext(typeof(KafeterijaContext))]
-    partial class KafeterijaContextModelSnapshot : ModelSnapshot
+    [Migration("20210327181901_V5")]
+    partial class V5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,15 +167,13 @@ namespace server.Migrations
 
             modelBuilder.Entity("server.Models.Sto", b =>
                 {
-                    b.HasOne("server.Models.Kafeterija", "Kafeterija")
+                    b.HasOne("server.Models.Kafeterija", null)
                         .WithMany("Stolovi")
                         .HasForeignKey("KafeterijaID");
 
                     b.HasOne("server.Models.Meni", "Meni")
                         .WithMany()
                         .HasForeignKey("MeniID");
-
-                    b.Navigation("Kafeterija");
 
                     b.Navigation("Meni");
                 });

@@ -12,8 +12,17 @@ namespace server.Models
         [Key]
         public int ID { get; set; }
 
-        [Column("BrStolova")]
-        public int BrStolova{get; set;}
+        [Column("BrojStolova")]
+        public int BrojStolova { get; set; }
+
+        [Column("Naziv")]
+        public string Naziv { get; set; }
+
+        [Column("Stolovi")]
+        public virtual List<Sto> Stolovi{get; set;}
+
+        [Column("Meni")]
+        public Meni Meni { get; set; }
 
     }
 }

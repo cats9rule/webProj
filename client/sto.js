@@ -1,28 +1,43 @@
-import { Narudzbina } from "./narudzbina.js";
 import { Pice } from "./pice.js";
 
 export class Sto{
 
-    constructor(broj, meniRef){
+    constructor(broj, meniRef, oznaka, id){
+        this.id = id;
+        this.oznaka = oznaka;
         this.broj = broj;
-        this.narudzbina = new Narudzbina();
         this.kontejner = null;
+        this.pica = [];
         this.meniRef = meniRef; 
+    }
+
+    ukloniPice(pice){
+        this.pica.filter(p=> p.Naziv !== pice.Naziv && 
+            p.Cena !== pice.Cena);
     }
 
     dodajPice(pice){
         let p = new Pice(pice.name, pice.value, pice.id);
-        this.narudzbina.dodajPice(p);
+        this.pica.push(p);
+        //this.narudzbina.dodajPice(p);
         // treba update prikaz
-        let t = document.querySelector(".Racun"+this.broj);
-        t.innerHTML += p.naziv + "<br>"; 
+        let t = document.querySelector(".Racun" + this.oznaka + "-" + this.broj);
+        t.innerHTML += p.naziv + " - " + p.cena + "<br>"; 
     }
 
     plati(){
-        let t = document.querySelector(".Racun"+this.broj);
-        console.log(t.innerHTML);
+        let t = document.querySelector(".Racun" + this.oznaka + "-" + this.broj);
         t.innerHTML = "";
-        return this.narudzbina.platiRacun();
+        let suma = 0;
+        let str = "";
+        this.pica.forEach(  (pice) => {
+            suma+= parseInt(pice.cena);
+            str+= pice.Naziv + " - " + pice.Cena + '\n';
+        });
+        str+= "Racun je: " + suma;
+        alert(str);
+        delete this.pica;
+        this.pica = [];
     }
 
     crtajSto(host){
@@ -31,12 +46,12 @@ export class Sto{
         host.appendChild(this.kontejner);
 
         const broj = document.createElement("label");
-        broj.innerHTML = this.broj;
+        broj.innerHTML = (this.broj+1);
         this.kontejner.appendChild(broj);
 
         const naruceno = document.createElement("p");
 
-        let id = "Racun" + this.broj;
+        let id = "Racun" + this.oznaka + "-" + this.broj;
         naruceno.classList.add(id);
         this.kontejner.appendChild(naruceno);
 
@@ -45,7 +60,7 @@ export class Sto{
         this.kontejner.appendChild(forma);
 
         const sel = document.createElement("select");
-        id = "naruciSelect"  + this.broj;
+        id = "naruciSelect" + this.oznaka + "-" + this.broj;
         sel.classList.add(id);
         forma.appendChild(sel);
 
@@ -67,10 +82,8 @@ export class Sto{
             });
 
         sel.onchange=(event) => {
-            let identity = ".btnDodajN" + this.broj;
+            let identity = ".btnNaruci" + this.oznaka + "-" + this.broj;
             btnD = document.querySelector(identity);
-            console.log(btnD);
-            console.log(sel.selectedIndex);
             if(sel.selectedIndex >= 0){
                 btnD.removeAttribute("disabled");
             }
@@ -85,31 +98,28 @@ export class Sto{
 
         let btnD = document.createElement("button");
         btnD.classList.add("dugme");
-        btnD.innerHTML = "Dodaj";
-        id = "btnDodajN" + this.broj;
-        console.log(id);
+        btnD.innerHTML = "Naruci";
+        id = "btnNaruci" + this.oznaka + "-" + this.broj;
         btnD.classList.add(id);
         btnD.setAttribute('disabled', true);
         btnD.onclick = (event) =>{
-            let s = document.querySelector(".naruciSelect" + this.broj);
+            let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
             this.dodajPice(s.options[s.selectedIndex]);
-            let b = document.querySelector(".btnPlatiN" + this.broj);
+            let b = document.querySelector(".btnPlati" + this.oznaka + "-" + this.broj);
             b.removeAttribute('disabled');
-            console.log(b.parentNode.parentNode);
             b.parentNode.parentNode.style.backgroundColor = "rgb(252, 193, 137)";
         }
         btnDiv.appendChild(btnD);
 
         let btnP = document.createElement("button");
         btnP.innerHTML = "Plati";
-        id = "btnPlatiN" + this.broj;
+        id = "btnPlati" + this.oznaka + "-" + this.broj;
         btnP.classList.add(id);
         btnP.setAttribute('disabled', true);
         btnP.classList.add("dugme");
         btnP.onclick = (event) => {
             this.plati();
             btnP.setAttribute('disabled', true);
-
             btnP.parentNode.parentNode.style.backgroundColor = "rgb(140, 194, 255)";
         }
         btnDiv.appendChild(btnP);
@@ -117,11 +127,11 @@ export class Sto{
     }
 
     addStavkaMeniSto(){
-        let s = document.querySelector(".naruciSelect" + this.broj);
+        let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
         let stavka = document.createElement("option");
 
-        let naz = document.querySelector(".nazivPica");
-        let c = document.querySelector(".cenaPica");
+        let naz = document.querySelector(".nazivPica" + this.oznaka);
+        let c = document.querySelector(".cenaPica" + this.oznaka);
         stavka.value = c.value;
         stavka.name = naz.value;
         stavka.innerHTML = naz.value;
@@ -129,11 +139,11 @@ export class Sto{
         s.appendChild(stavka);
     }
     removeStavkaMeniSto(index){
-        let s = document.querySelector(".naruciSelect" + this.broj);
+        let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
         s.options[index] = null
     }
     updateStavkaMeniSto(index, stavka){
-        let s = document.querySelector(".naruciSelect" + this.broj);
+        let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
         s.options[index].name = stavka.name;
         s.options[index].value = stavka.value;
         s.options[index].innerHTML = stavka.innerHTML;

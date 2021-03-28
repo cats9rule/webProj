@@ -3,21 +3,38 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using server.Models;
 
 namespace server.Migrations
 {
     [DbContext(typeof(KafeterijaContext))]
-    partial class KafeterijaContextModelSnapshot : ModelSnapshot
+    [Migration("20210327143313_V4")]
+    partial class V4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("PiceSto", b =>
+                {
+                    b.Property<int>("PicaID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoloviID")
+                        .HasColumnType("int");
+
+                    b.HasKey("PicaID", "StoloviID");
+
+                    b.HasIndex("StoloviID");
+
+                    b.ToTable("PiceSto");
+                });
 
             modelBuilder.Entity("server.Models.Kafeterija", b =>
                 {
@@ -84,27 +101,6 @@ namespace server.Migrations
                     b.ToTable("Pice");
                 });
 
-            modelBuilder.Entity("server.Models.PiceSto", b =>
-                {
-                    b.Property<int>("PiceID")
-                        .HasColumnType("int")
-                        .HasColumnName("PiceID");
-
-                    b.Property<int>("StoID")
-                        .HasColumnType("int")
-                        .HasColumnName("StoID");
-
-                    b.Property<int>("BrojPica")
-                        .HasColumnType("int")
-                        .HasColumnName("BrojPica");
-
-                    b.HasKey("PiceID", "StoID");
-
-                    b.HasIndex("StoID");
-
-                    b.ToTable("PiceSto");
-                });
-
             modelBuilder.Entity("server.Models.Sto", b =>
                 {
                     b.Property<int>("ID")
@@ -128,6 +124,21 @@ namespace server.Migrations
                     b.ToTable("Sto");
                 });
 
+            modelBuilder.Entity("PiceSto", b =>
+                {
+                    b.HasOne("server.Models.Pice", null)
+                        .WithMany()
+                        .HasForeignKey("PicaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.Models.Sto", null)
+                        .WithMany()
+                        .HasForeignKey("StoloviID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("server.Models.Kafeterija", b =>
                 {
                     b.HasOne("server.Models.Meni", "Meni")
@@ -144,36 +155,15 @@ namespace server.Migrations
                         .HasForeignKey("MeniID");
                 });
 
-            modelBuilder.Entity("server.Models.PiceSto", b =>
-                {
-                    b.HasOne("server.Models.Pice", "Pice")
-                        .WithMany("Veza")
-                        .HasForeignKey("PiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("server.Models.Sto", "Sto")
-                        .WithMany("Veza")
-                        .HasForeignKey("StoID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pice");
-
-                    b.Navigation("Sto");
-                });
-
             modelBuilder.Entity("server.Models.Sto", b =>
                 {
-                    b.HasOne("server.Models.Kafeterija", "Kafeterija")
+                    b.HasOne("server.Models.Kafeterija", null)
                         .WithMany("Stolovi")
                         .HasForeignKey("KafeterijaID");
 
                     b.HasOne("server.Models.Meni", "Meni")
                         .WithMany()
                         .HasForeignKey("MeniID");
-
-                    b.Navigation("Kafeterija");
 
                     b.Navigation("Meni");
                 });
@@ -186,16 +176,6 @@ namespace server.Migrations
             modelBuilder.Entity("server.Models.Meni", b =>
                 {
                     b.Navigation("Stavke");
-                });
-
-            modelBuilder.Entity("server.Models.Pice", b =>
-                {
-                    b.Navigation("Veza");
-                });
-
-            modelBuilder.Entity("server.Models.Sto", b =>
-                {
-                    b.Navigation("Veza");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,22 +2,19 @@ import { Pice } from "./pice.js";
 
 export class Meni{
 
-    constructor(k){
+    constructor(k, id){
 
-        this.id = 0;
+        this.id = id;
 
         this.kontejner = null;
 
         this.kafeterijaRef = k;
-
-        this.brojStavki = 4;
 
         this.stavke = [];
 
         fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
                 p.json().then(data => {
                     data.forEach(pice => {
-                        //console.log(pice.naziv);
                         const kafa = new Pice(pice.naziv, pice.cena, pice.id); 
                         this.stavke.push(kafa);
                     });
@@ -28,17 +25,20 @@ export class Meni{
     dodajStavku(){
         //console.log("stavka");
 
-        let naz = document.querySelector(".nazivPica");
-        let cena = document.querySelector(".cenaPica");
+        let klasa = ".nazivPica" + this.id;
+        let naz = document.querySelector(klasa);
+
+        klasa = ".cenaPica" + this.id;
+        let cena = document.querySelector(klasa);
+
         let s = new Pice(naz.value,parseInt(cena.value));
 
         console.log(s);
         
-        
-        let l = document.querySelector(".stavkeSelect");
+        let l = document.querySelector(".stavkeSelect"+this.id);
         console.log(l);
 
-        let index = this.brojStavki + 1;
+        let index = this.stavke.length + 1;
 
         fetch("https://localhost:5001/Kafeterija/UpisiPice/" + index, {
                 method: "POST",
@@ -75,7 +75,7 @@ export class Meni{
     }
 
     obrisiStavku(){
-        let lista = document.querySelector(".stavkeSelect");
+        let lista = document.querySelector(".stavkeSelect"+this.id);
         let index = lista.options.selectedIndex;
         console.log(index);
         let p = lista.options[index];
@@ -109,10 +109,10 @@ export class Meni{
     }
 
     izmeniStavku(index){
-        let naz = document.querySelector(".nazivPica");
-        let cena = document.querySelector(".cenaPica");
+        let naz = document.querySelector(".nazivPica"+this.id);
+        let cena = document.querySelector(".cenaPica"+this.id);
 
-        let lista = document.querySelector(".stavkeSelect");
+        let lista = document.querySelector(".stavkeSelect"+this.id);
         let stavka = lista.options[index];
 
         console.log(stavka);
@@ -150,7 +150,8 @@ export class Meni{
         }
 
         this.kontejner = document.createElement("div");
-        this.kontejner.classList.add("meni");
+        let klasa = "meni" + this.id;
+        this.kontejner.classList.add(klasa);
         host.appendChild(this.kontejner);
         let meniTekst = document.createElement("h2");
         meniTekst.innerHTML = "Meni";
@@ -170,7 +171,7 @@ export class Meni{
 
         const sel = document.createElement("select");
         sel.classList.add("stavkaMeni");
-        sel.classList.add("stavkeSelect");
+        sel.classList.add("stavkeSelect"+this.id);
         sel.setAttribute('multiple', true);
         sel.size = 10;
         forma.appendChild(sel);
@@ -196,9 +197,9 @@ export class Meni{
         sel.onchange=(event) => {
             let i = sel.selectedIndex;
             if(i >= 0) {
-                let naz = document.querySelector(".nazivPica");
+                let naz = document.querySelector(".nazivPica"+this.id);
                 naz.value = sel.options[i].name;
-                naz = document.querySelector(".cenaPica");
+                naz = document.querySelector(".cenaPica"+this.id);
                 naz.value = sel.options[i].value;
             }
         }
@@ -216,7 +217,7 @@ export class Meni{
         inp.classList.add("polje");
         inp.type = "text";
         inp.name = "naziv";
-        let id = "nazivPica";
+        let id = "nazivPica" + this.id;
         inp.classList.add(id);
         
         p.appendChild(inp);
@@ -230,7 +231,7 @@ export class Meni{
         inp.classList.add("polje");
         inp.type = "number";
         inp.name = "cena";
-        id = "cenaPica";
+        id = "cenaPica" + this.id;
         inp.classList.add(id);
         p.appendChild(inp);
      
@@ -254,7 +255,7 @@ export class Meni{
         forma.appendChild(btnIzmeni);
 
         btnIzmeni.onclick=(event) => {
-            let lista = document.querySelector(".stavkeSelect");
+            let lista = document.querySelector(".stavkeSelect"+this.id);
             let i = lista.options.selectedIndex;
             this.izmeniStavku(i);
         }

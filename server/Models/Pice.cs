@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,5 +16,8 @@ namespace server.Models
 
         [Column("Cena")]
         public int Cena {get; set;}
+
+        [Column("NaStolu")]
+        public virtual List<PiceSto> Veza { get; set; }
     }
 }

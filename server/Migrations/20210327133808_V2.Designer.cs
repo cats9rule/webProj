@@ -10,8 +10,8 @@ using server.Models;
 namespace server.Migrations
 {
     [DbContext(typeof(KafeterijaContext))]
-    [Migration("20210321184248_V1")]
-    partial class V1
+    [Migration("20210327133808_V2")]
+    partial class V2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,8 +29,16 @@ namespace server.Migrations
                         .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("BrojStolova")
+                        .HasColumnType("int")
+                        .HasColumnName("BrojStolova");
+
                     b.Property<int?>("MeniID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Naziv")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Naziv");
 
                     b.HasKey("ID");
 
@@ -52,19 +60,6 @@ namespace server.Migrations
                     b.ToTable("Meni");
                 });
 
-            modelBuilder.Entity("server.Models.Narudzbina", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Narudzbina");
-                });
-
             modelBuilder.Entity("server.Models.Pice", b =>
                 {
                     b.Property<int>("ID")
@@ -80,28 +75,33 @@ namespace server.Migrations
                     b.Property<int?>("MeniID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NarudzbinaID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Naziv")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Naziv");
+
+                    b.Property<int?>("StoID")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("MeniID");
 
-                    b.HasIndex("NarudzbinaID");
+                    b.HasIndex("StoID");
 
                     b.ToTable("Pice");
                 });
 
             modelBuilder.Entity("server.Models.Sto", b =>
                 {
-                    b.Property<int>("Broj")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
+                        .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Broj")
+                        .HasColumnType("int")
+                        .HasColumnName("Broj");
 
                     b.Property<int?>("KafeterijaID")
                         .HasColumnType("int");
@@ -109,16 +109,11 @@ namespace server.Migrations
                     b.Property<int?>("MeniID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("NarudzbinaID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Broj");
+                    b.HasKey("ID");
 
                     b.HasIndex("KafeterijaID");
 
                     b.HasIndex("MeniID");
-
-                    b.HasIndex("NarudzbinaID");
 
                     b.ToTable("Sto");
                 });
@@ -138,9 +133,9 @@ namespace server.Migrations
                         .WithMany("Stavke")
                         .HasForeignKey("MeniID");
 
-                    b.HasOne("server.Models.Narudzbina", null)
+                    b.HasOne("server.Models.Sto", null)
                         .WithMany("Pica")
-                        .HasForeignKey("NarudzbinaID");
+                        .HasForeignKey("StoID");
                 });
 
             modelBuilder.Entity("server.Models.Sto", b =>
@@ -153,13 +148,7 @@ namespace server.Migrations
                         .WithMany()
                         .HasForeignKey("MeniID");
 
-                    b.HasOne("server.Models.Narudzbina", "Narudzbina")
-                        .WithMany()
-                        .HasForeignKey("NarudzbinaID");
-
                     b.Navigation("Meni");
-
-                    b.Navigation("Narudzbina");
                 });
 
             modelBuilder.Entity("server.Models.Kafeterija", b =>
@@ -172,7 +161,7 @@ namespace server.Migrations
                     b.Navigation("Stavke");
                 });
 
-            modelBuilder.Entity("server.Models.Narudzbina", b =>
+            modelBuilder.Entity("server.Models.Sto", b =>
                 {
                     b.Navigation("Pica");
                 });

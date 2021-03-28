@@ -10,13 +10,17 @@ namespace server.Models{
 
         public DbSet<Meni> Meni { get; set; }
 
-        public DbSet<Narudzbina> Narudzbine { get; set; }
-
         public DbSet<Kafeterija> Kafeterije { get; set; }
+
+        public DbSet<PiceSto> PiceSto { get; set; }
 
         public KafeterijaContext(DbContextOptions options) :base(options)
         {
 
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PiceSto>().HasKey(x => new { x.PiceID, x.StoID });
         }
 
     }
