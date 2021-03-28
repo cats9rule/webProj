@@ -2,7 +2,7 @@ import { Pice } from "./pice.js";
 
 export class Sto{
 
-    constructor(broj, meniRef, oznaka, id){
+    constructor(id, broj, meniRef, oznaka){
         this.id = id;
         this.oznaka = oznaka;
         this.broj = broj;
@@ -17,12 +17,12 @@ export class Sto{
     }
 
     dodajPice(pice){
-        let p = new Pice(pice.name, pice.value, pice.id);
-        this.pica.push(p);
-        //this.narudzbina.dodajPice(p);
+
+        this.pica.push(pice);
+
         // treba update prikaz
         let t = document.querySelector(".Racun" + this.oznaka + "-" + this.broj);
-        t.innerHTML += p.naziv + " - " + p.cena + "<br>"; 
+        t.innerHTML += pice.naziv + " - " + pice.cena + "<br>"; 
     }
 
     plati(){
@@ -49,11 +49,12 @@ export class Sto{
         broj.innerHTML = (this.broj+1);
         this.kontejner.appendChild(broj);
 
-        const naruceno = document.createElement("p");
+        const racun = document.createElement("p");
 
         let id = "Racun" + this.oznaka + "-" + this.broj;
-        naruceno.classList.add(id);
-        this.kontejner.appendChild(naruceno);
+        racun.classList.add(id);
+
+        this.kontejner.appendChild(racun);
 
         const forma = document.createElement("form");
         forma.classList.add("forma");
@@ -66,22 +67,17 @@ export class Sto{
 
         let stavka;
 
-        fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
-                p.json().then(data => {
-                    data.forEach(pice => {
-                        //console.log(pice.naziv);
-                        stavka = document.createElement("option");
-                        stavka.classList.add("stavkaMeni");
+        this.meniRef.stavke.forEach( pice => {
+            stavka = document.createElement("option");
+            stavka.classList.add("stavkaMeni");
 
-                        stavka.value = pice.cena;
-                        stavka.name = pice.naziv;
-                        stavka.innerHTML = pice.naziv;
-                        sel.add(stavka);
-                    });
-                }); 
-            });
+            stavka.value = pice.cena;
+            stavka.name = pice.naziv;
+            stavka.innerHTML = pice.naziv;
+            sel.add(stavka);
+        });
 
-        sel.onchange=(event) => {
+        sel.onclick=(event) => {
             let identity = ".btnNaruci" + this.oznaka + "-" + this.broj;
             btnD = document.querySelector(identity);
             if(sel.selectedIndex >= 0){
@@ -102,9 +98,61 @@ export class Sto{
         id = "btnNaruci" + this.oznaka + "-" + this.broj;
         btnD.classList.add(id);
         btnD.setAttribute('disabled', true);
+
         btnD.onclick = (event) =>{
             let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
-            this.dodajPice(s.options[s.selectedIndex]);
+            let piceid = this.meniRef.stavke[s.selectedIndex].id;
+            let picepostoji = 0;
+
+            this.pica.forEach( pice => {
+                if(pice.id == piceid && picepostoji == 0){
+                    // pice postoji, treba azurirati broj pica u bazi
+                    fetch("https://localhost:5001/Kafeterija/DodajJosJednoPice/" + this.id + "/" + piceid, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                        })
+                        .then(p => {
+                            if (p.ok) {
+                                alert("Pice na stolu, jos jedno.");
+
+                            }
+                            else if(p.status == 406){
+                                alert("Pice na stolu nije nadjeno.");
+                            }
+                            else{
+                                alert("Greska pri upisu.");
+                            }
+                        });
+                    picepostoji++;
+                }
+            });
+            if(picepostoji == 0){
+                //console.log("sto: " + this.id + "\npice: " + piceid);
+                fetch("https://localhost:5001/Kafeterija/DodajPiceNaSto/" + this.id + "/" + piceid, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "piceID": piceid,
+                        "brojPica": 1,
+                        "stoID": this.id
+                    })
+                })
+                .then(p => {
+                    if (p.ok) {
+                        alert("Pice na stolu.");
+
+                    }
+                    else {
+                        alert("Greška prilikom upisa.");
+                    }
+                });
+            }
+            
+            this.dodajPice(this.meniRef.stavke[s.selectedIndex]);
             let b = document.querySelector(".btnPlati" + this.oznaka + "-" + this.broj);
             b.removeAttribute('disabled');
             b.parentNode.parentNode.style.backgroundColor = "rgb(252, 193, 137)";
@@ -117,12 +165,51 @@ export class Sto{
         btnP.classList.add(id);
         btnP.setAttribute('disabled', true);
         btnP.classList.add("dugme");
+
         btnP.onclick = (event) => {
-            this.plati();
-            btnP.setAttribute('disabled', true);
-            btnP.parentNode.parentNode.style.backgroundColor = "rgb(140, 194, 255)";
+            fetch("https://localhost:5001/Kafeterija/IzbrisiPicaSaStola/" + this.id, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify ({
+                    
+                })
+            })
+            .then(p => {
+                if(p.ok){
+                    this.plati();
+                    btnP.setAttribute('disabled', true);
+                    btnP.parentNode.parentNode.style.backgroundColor = "rgb(140, 194, 255)";
+                }
+                else alert("Greska prilikom placanja.");
+            }
+            );
         }
         btnDiv.appendChild(btnP);
+
+        fetch("https://localhost:5001/Kafeterija/PreuzmiPicaZaSto/" + this.id).then(p => {
+                p.json().then(data => {
+                    data.forEach(naruceno => {
+                        let temp;
+
+                        this.meniRef.stavke.forEach(s => {
+                            if(s.id == naruceno.piceID){
+                                temp = s;
+                            }
+                        });
+
+                        for(let i = 0; i < naruceno.brojPica; i++){
+                            this.pica.push(new Pice(temp.naziv, temp.cena, temp.id));
+                            console.log("Pice na stolu: " + temp.naziv);
+                            racun.innerHTML += temp.naziv + " - " + temp.cena + "<br>";
+                        }
+                        let b = document.querySelector(".btnPlati" + this.oznaka + "-" + this.broj);
+                        b.removeAttribute('disabled');
+                        b.parentNode.parentNode.style.backgroundColor = "rgb(252, 193, 137)";
+                    });
+                }); 
+            });
 
     }
 
@@ -138,10 +225,12 @@ export class Sto{
         stavka.classList.add("stavkaMeni");
         s.appendChild(stavka);
     }
+
     removeStavkaMeniSto(index){
         let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
         s.options[index] = null
     }
+
     updateStavkaMeniSto(index, stavka){
         let s = document.querySelector(".naruciSelect" + this.oznaka + "-" + this.broj);
         s.options[index].name = stavka.name;

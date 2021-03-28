@@ -3,22 +3,22 @@ import { Sto } from "./sto.js";
 
 export class Kafeterija{
     
-    constructor(brStolova, id, naziv){
-        this.id = id;
-        this.brStolova = parseInt(brStolova);
-        this.meni = new Meni(this, id);
-        this.naziv = naziv;
+    constructor(k){
+        this.id = k.id;
+        this.brStolova = parseInt(k.brojStolova);
+        this.meni = new Meni(this, k.meni);
+        this.naziv = k.naziv;
         this.kontejner = null;
         this.stolovi = [];
         for(let i=0;i<this.brStolova;i++){
-            this.stolovi.push(new Sto(i, this.meni, this.id));
+            this.stolovi.push(new Sto(k.stolovi[i].id, i, this.meni, this.id));
         }
     }
 
     crtajKafeteriju(host){
         let naslov = document.createElement("h1");
         naslov.classList.add("naslov");
-        naslov.innerHTML = "Kafeterija" + " " + (this.id+1);
+        naslov.innerHTML = this.naziv;
         host.appendChild(naslov);
         this.kontejner = document.createElement("div");
         this.kontejner.classList.add("kafeterija");

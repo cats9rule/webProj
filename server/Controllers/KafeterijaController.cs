@@ -20,9 +20,9 @@ namespace server.Controllers
             Context = context;
         }
 
-        [Route("UpisiPice/{id}")]
+        [Route("UpisiPice/{ind}")]
         [HttpPost]
-        public async Task<IActionResult> UpisiPice(int id, [FromBody] Pice pice)
+        public async Task<IActionResult> UpisiPice(int ind, [FromBody] Pice pice)
         {
             if(pice.Cena > 0 && pice.Naziv.Length-1 > 0)
             {
@@ -32,7 +32,7 @@ namespace server.Controllers
             }
             else
             {
-                return StatusCode(406);
+                return BadRequest();
             }
         }
 
@@ -73,13 +73,21 @@ namespace server.Controllers
             return await Context.Pica.ToListAsync();
         }
 
+        [Route("PreuzmiPoslednjePice")]
+        [HttpGet]
+        public async Task<Pice> PreuzmiPoslednjePice()
+        {
+            List<Pice> pica = await Context.Pica.ToListAsync();
+            return pica[pica.Count-1];
+        }
+
 
         [Route("PreuzmiKafeterije")]
         [HttpGet]
         public async Task<List<Kafeterija>> PreuzmiKafeterije()
         {
             return await Context.Kafeterije.Include(p => p.Meni).ThenInclude(q => q.Stavke)
-            .Include(p => p.Stolovi).ThenInclude(q => q.Veza).ThenInclude(r => r.Pice)
+            .Include(p => p.Stolovi)
             .ToListAsync();
         }
 
@@ -162,30 +170,31 @@ namespace server.Controllers
         [HttpPut]
         public async Task<IActionResult> DodajJosJednoPice(int idSto, int idPice)
         {
-            PiceSto ps = await Context.PiceSto.FindAsync(idSto, idPice);
+            PiceSto ps = await Context.PiceSto.FindAsync(idPice, idSto); // redosled kljuceva je ovaj!
             if(ps == null) 
             {
                 return StatusCode(406);
             }
             ps.BrojPica++;
             Context.PiceSto.Update(ps);
+            await Context.SaveChangesAsync();
             return Ok();
         }
 
         [Route("PreuzmiPicaZaSto/{idSto}")]
         [HttpGet]
-        public async Task<List<Pice>> PreuzmiPicaZaSto(int idSto)
+        public async Task<List<PiceSto>> PreuzmiPicaZaSto(int idSto)
         {
-            var p = await Context.PiceSto.ToListAsync();
-            List<Pice> pica = new List<Pice>(); 
+            List<PiceSto> p = await Context.PiceSto.ToListAsync();
+            List<PiceSto> picaSto = new List<PiceSto>(); 
             foreach(PiceSto ps in p)
             {
                 if(ps.StoID == idSto)
                 {
-                    pica.Add(await Context.Pica.FindAsync(ps.PiceID));
+                    picaSto.Add(ps);
                 }
             }
-            return pica;
+            return picaSto;
         }
 
     }

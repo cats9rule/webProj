@@ -2,9 +2,9 @@ import { Pice } from "./pice.js";
 
 export class Meni{
 
-    constructor(k, id){
+    constructor(k, m){
 
-        this.id = id;
+        this.id = m.id;
 
         this.kontejner = null;
 
@@ -12,18 +12,14 @@ export class Meni{
 
         this.stavke = [];
 
-        fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
-                p.json().then(data => {
-                    data.forEach(pice => {
-                        const kafa = new Pice(pice.naziv, pice.cena, pice.id); 
-                        this.stavke.push(kafa);
-                    });
-                }); 
-            });
+        m.stavke.forEach(pice => {
+            //console.log(pice.id);
+            const kafa = new Pice(pice.naziv, pice.cena, pice.id); 
+            this.stavke.push(kafa);
+        });
     }
 
     dodajStavku(){
-        //console.log("stavka");
 
         let klasa = ".nazivPica" + this.id;
         let naz = document.querySelector(klasa);
@@ -31,12 +27,8 @@ export class Meni{
         klasa = ".cenaPica" + this.id;
         let cena = document.querySelector(klasa);
 
-        let s = new Pice(naz.value,parseInt(cena.value));
-
-        console.log(s);
-        
         let l = document.querySelector(".stavkeSelect"+this.id);
-        console.log(l);
+        //console.log(l);
 
         let index = this.stavke.length + 1;
 
@@ -47,9 +39,11 @@ export class Meni{
                 },
                 body: JSON.stringify({
                     "naziv": naz.value,
-                    "cena": cena.value
+                    "cena": cena.value,
+                    "meniID": this.id
                 })
             }).then(p => {
+                console.log(p);
                 if (p.ok) {
                     let stavka = document.createElement("option");
                     stavka.classList.add("stavkaMeni");
@@ -57,13 +51,19 @@ export class Meni{
                     stavka.name = naz.value;
                     stavka.innerHTML = naz.value;
                     l.add(stavka);
-        
-                    alert(stavka.name);
+
+                    fetch("https://localhost:5001/Kafeterija/PreuzmiPoslednjePice").then(q => {
+                    q.json().then(data => {
+                    //console.log(data.id);
+                    let s = new Pice(data.naziv,data.cena, data.id);
+                    console.log(s);
 
                     this.stavke.push(s);
                     this.kafeterijaRef.dodajStavkuSto();
+                    });
+                });
                 }
-                else if (p.status == 406) {
+                else if (p.status == 500) {
                     alert("Cena pica ne sme da bude negativna, i pice treba da ima naziv!");
                 }
                 else {
@@ -77,8 +77,8 @@ export class Meni{
     obrisiStavku(){
         let lista = document.querySelector(".stavkeSelect"+this.id);
         let index = lista.options.selectedIndex;
-        console.log(index);
-        let p = lista.options[index];
+        //console.log(index);
+        //let p = lista.options[index];
         let stavka = this.stavke[index];
 
 
@@ -88,15 +88,13 @@ export class Meni{
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify ({
-                    "naziv": p.name,
-                    "cena": p.value,
+                   
                 })
             }).then(p => {
                 if (p.ok)
                 {
                     lista.removeChild(lista.options[index]);
-                    this.stavke = this.stavke.filter(s=>s.Naziv!==p.name
-                        && s.Cena!==p.value);
+                    this.stavke = this.stavke.filter(s=>s.id!==stavka.id);
                     //console.log(this.stavke);
 
                     this.kafeterijaRef.ukloniStavkuSto(index);
@@ -115,7 +113,7 @@ export class Meni{
         let lista = document.querySelector(".stavkeSelect"+this.id);
         let stavka = lista.options[index];
 
-        console.log(stavka);
+        //console.log(stavka);
 
         let s = (this.stavke[index]);
 
@@ -178,20 +176,15 @@ export class Meni{
 
         let stavka;
 
-        fetch("https://localhost:5001/Kafeterija/PreuzmiPica").then(p => {
-                p.json().then(data => {
-                    data.forEach(pice => {
-                        //console.log(pice.naziv);
-                        stavka = document.createElement("option");
-                        stavka.classList.add("stavkaMeni");
+        this.stavke.forEach( pice => {
+            stavka = document.createElement("option");
+            stavka.classList.add("stavkaMeni");
 
-                        stavka.value = pice.cena;
-                        stavka.name = pice.naziv;
-                        stavka.innerHTML = pice.naziv;
-                        sel.add(stavka);
-                    });
-                }); 
-            });
+            stavka.value = pice.cena;
+            stavka.name = pice.naziv;
+            stavka.innerHTML = pice.naziv;
+            sel.add(stavka);
+        });
 
         // pri odabiru stavke, odgovarajuca polja dobijaju adekvatne vrednosti
         sel.onchange=(event) => {
