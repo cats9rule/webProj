@@ -28,7 +28,7 @@ namespace server.Controllers
             {
                 Context.Pica.Add(pice);
                 await Context.SaveChangesAsync();
-                return Ok();
+                return Ok(pice.ID);
             }
             else
             {
@@ -66,22 +66,6 @@ namespace server.Controllers
             }
         }
 
-        [Route("PreuzmiPica")]
-        [HttpGet]
-        public async Task<List<Pice>> PreuzmiPica()
-        {
-            return await Context.Pica.ToListAsync();
-        }
-
-        [Route("PreuzmiPoslednjePice")]
-        [HttpGet]
-        public async Task<Pice> PreuzmiPoslednjePice()
-        {
-            List<Pice> pica = await Context.Pica.ToListAsync();
-            return pica[pica.Count-1];
-        }
-
-
         [Route("PreuzmiKafeterije")]
         [HttpGet]
         public async Task<List<Kafeterija>> PreuzmiKafeterije()
@@ -90,48 +74,6 @@ namespace server.Controllers
             .Include(p => p.Stolovi)
             .ToListAsync();
         }
-
-
-
-        [Route("PreuzmiMenije")]
-        [HttpGet]
-        public async Task<List<Meni>> PreuzmiMenije()
-        {
-            return await Context.Meni.Include(p => p.Stavke).ToListAsync();
-        }
-
-        [Route("PreuzmiMeni/{id}")]
-        [HttpGet]
-        public async Task<Meni> PreuzmiMeni(int id)
-        {
-            List<Meni> lista =  await Context.Meni.Include(p => p.Stavke).ToListAsync();
-            foreach(Meni m in lista)
-            {
-                if(m.ID == id)
-                {
-                    return m;
-                }
-            }
-            return null;
-        }
-
-
-
-        [Route("PreuzmiStolove")]
-        [HttpGet]
-        public async Task<List<Sto>> PreuzmiStolove()
-        {
-            return await Context.Stolovi.ToListAsync();
-        }
-
-        [Route("PreuzmiStoloveZaKafeteriju/{id}")]
-        [HttpGet]
-        public async Task<List<Sto>> PreuzmiStoloveZaKafeteriju(int id)
-        {
-            List<Sto> lista = await Context.Stolovi.ToListAsync();
-            return lista.Where(Sto => Sto.Kafeterija.ID == id).ToList();
-        }
-
 
 
         [Route("DodajPiceNaSto/{idPice}/{idSto}")]
@@ -185,16 +127,8 @@ namespace server.Controllers
         [HttpGet]
         public async Task<List<PiceSto>> PreuzmiPicaZaSto(int idSto)
         {
-            List<PiceSto> p = await Context.PiceSto.ToListAsync();
-            List<PiceSto> picaSto = new List<PiceSto>(); 
-            foreach(PiceSto ps in p)
-            {
-                if(ps.StoID == idSto)
-                {
-                    picaSto.Add(ps);
-                }
-            }
-            return picaSto;
+            List<PiceSto> p = await Context.PiceSto.Where(p => p.StoID == idSto).ToListAsync();
+            return p;
         }
 
     }

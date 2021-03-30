@@ -202,6 +202,7 @@ export class Sto{
                         let temp;
 
                         this.meniRef.stavke.forEach(s => {
+                            // prvo se locira pice na meniju, zbog optimalnosti
                             if(s.id == naruceno.piceID){
                                 temp = s;
                             }

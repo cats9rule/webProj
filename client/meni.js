@@ -54,20 +54,15 @@ export class Meni{
                     stavka.innerHTML = naz.value;
                     l.add(stavka);
 
-                    fetch("https://localhost:5001/Kafeterija/PreuzmiPoslednjePice").then(q => {
-                    q.json().then(data => {
-
-                        /* baza generise ID novog pica, ali taj ID 
-                        je potreban za dodavanje pica na sto. Potrebno je 
-                        preuzeti ID iz baze.*/
-
-                        let s = new Pice(data.naziv,data.cena, data.id);
-                        console.log(s);
-
+                    /* baza generise ID novog pica, ali taj ID 
+                    je potreban za dodavanje pica na sto. Potrebno je 
+                    preuzeti ID iz baze.*/
+                    
+                    p.json().then(p => {
+                        let s = new Pice(naz.value,cena.value, p);
                         this.stavke.push(s);
                         this.kafeterijaRef.dodajStavkuSto();
-                    });
-                });
+                    }); 
                 }
                 else if (p.status == 406) {
                     // server vraca kod 406 ako parametri pica nisu regularni
